@@ -28,26 +28,16 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  if (accountIsValid(req.body)) {
-    db('accounts')
-      .insert(req.body, 'id')
-      .then(([id]) => id)
-      .then(id => {
-        db('accounts')
-          .where({ id })
-          .first()
-          .then(account => {
-            res.status(201).json(account);
-          });
-      })
-      .catch(() => {
-        res.status(500).json({ message: 'unable to add this account' });
-      });
-  } else {
-    res.status(400).json({
-      message: 'please provide a name and budget for this account',
+  db('accounts')
+    .insert(req.body, 'id')
+    .then(ids => {
+      res.status(201).json(ids);
+    })
+    .catch(error => {
+      console.log(error);
+
+      res.status(500).json({ error: "unable to add the account" });
     });
-  }
 });
 
 router.put('/:id', (req, res) => {
